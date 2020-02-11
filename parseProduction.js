@@ -76,39 +76,27 @@ const parseProduction = (systemProduction, estimatedProduction) => {
 		if (!stop && element === 0) element = dailyProd;
 		return element;
     })
-    
-    console.log(newProd)
-    return newProd;
-}
 
+	console.log(newProd)
+	
+	// let output = new Map([["blah", new Map([["blah", "blah"]]) ]]); // example
 
-const mapResponse = (startDate, newProd) => {
+	let response = newProd.reverse().reduce((acc, val) => {
 
-	// let startingDate = moment(startDate).add(365, 'day');
-	let response = newProd.map(val => {
-		
-		// let aYearFromNow = startingDate.year();
-
-		// if(!map.has(aYearFromNow)) {
-		// 	map.set(aYearFromNow, newMap)
-		// }
 		let monthForThisDay = moment(startDate).month() + 1;
-
+		let daysInMonth = moment(startDate).daysInMonth();
 		let myProductionMap = new Map()
 
-		let dailyProd =+ val;
-		myProductionMap.set(
-			monthForThisDay,
-			dailyProd
-		)	
+		let prodSum = newProd.reduce((a,b)  => a + b, 0);
+		console.log(prodSum)
 
-		console.log(val)		
+		myProductionMap.set( monthForThisDay, prodSum )	
 
-		console.log(myProductionMap)
 		return myProductionMap;
-	}, new Map())
-	return response;
+	}, new Map ());
 
+	console.log(response);
+    return response;
 }
 
 parseProduction(systemProduction, estimatedProduction);
