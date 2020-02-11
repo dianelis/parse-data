@@ -1,4 +1,5 @@
-const moment = require('moment');
+const moment = require('moment')
+const { estimatedProduction, systemProduction } = require('./index')
 
 const prod = (lastDay, production, estimatedProduction) => {
 
@@ -9,6 +10,7 @@ const prod = (lastDay, production, estimatedProduction) => {
 		let elementDay = moment(lastDay);
 
 		lastDay = moment(lastDay).subtract(1, 'days');
+
 
 		let elementMonth = elementDay.month() + 1;
 
@@ -31,34 +33,35 @@ const prod = (lastDay, production, estimatedProduction) => {
 
 const mapResponse = (startDate, newProd) => {
 
-	let startDate = moment(startDate);
+	let startingDate = moment(startDate);
 
-	let response = systemProduction.production.reduce((map, val) => {
+	let response = newProd.reduce((map, val) => {
 		
-		let year = startDate.year();
+		let year = startingDate.year();
+
+		let newMap = new Map([["key1", "value1"]])
 
 		if(!map.has(year)) {
-			map.set(year, new Map([])
-			)
+			map.set(year, newMap)
 		}
 
-		return year;
+		console.log(map)
+
+		return map;
 
 	}, new Map())
 
-}
+	return response;
 
+}
 
 let handler = ({ systemProduction, estimatedProduction }) => {
 
-	let lastDay = moment(systemProduction.start_date).add(365, 'day');
-
-	let production = systemProduction.production;
+	let startDate = systemProduction.start_date;
+	let lastDay = moment(systemProduction.start_date).add(365, 'day')
+	let production = systemProduction.production
 
 	return result;
 };
 
 module.exports = { handler, prod, mapResponse }
-
-
-

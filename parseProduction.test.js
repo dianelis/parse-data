@@ -1,5 +1,5 @@
 const { expect } = require('chai')
-const { prod } = require('./parseProduction');
+const { prod, mapResponse } = require('./parseProduction');
 
 // Monthly estimates
 const estimatedProduction = new Map([
@@ -32,13 +32,24 @@ const systemProduction = {
 	]
 };
 
-describe('estimated production', () => {
-    it('reversed production dates', () => {
+describe('updates array', () => {
+    it('compares both arrays are equals', () => {
         const startDate = '2018-08-31';
-        const arrayTest = [1,0,0,1,1,1,1,1,1,1,0,0,0,0];
-        const prodForTest = prod(startDate, arrayTest, estimatedProduction);
+        const productionTest = [1,0,0,1,1,1,1,1,1,1,0,0,0,0];
+        const prodForTest = prod(startDate, productionTest, estimatedProduction);
         // console.log([1,0,0,1,1,1,1,1,1,1,1,1,1,1])
         // console.log(prodForTest);
+
         expect(prodForTest).to.deep.equal([1,0,0,1,1,1,1,1,1,1,1,1,1,1]);
+    });
+})
+
+describe('Map Response', () => {
+    it('compares both arrays are equals', () => {
+        const startDate = '2018-08-31';
+        const productionTest = [1,0,0,1,1,1,1,1,1,1,1,1,1,1];
+        const mapTest = mapResponse(startDate, productionTest)
+
+        // expect(mapTest).to.deep.equal("");
     });
 })
