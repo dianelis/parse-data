@@ -5,7 +5,7 @@
     "main": "server.js",
     "scripts": {
         "test": "mocha parseProduction.test.js",
-        "start": "node parseProduction.js"
+        "start": "node parseProductionNew.js"
     },
     "keywords": [],
     "author": "",
