@@ -58,41 +58,57 @@ const systemProduction = {
 
 const parseProduction = (systemProduction, estimatedProduction) => {
 
-    let startDate = systemProduction.start_date;
-	let lastDay = moment(systemProduction.start_date).add(365, 'day');
-	let production = systemProduction.production;
+    const { start_date: startDate, production } = systemProduction;
+	let firstZeroIndex = -1;
 
-	let stop = false;
+	const newProd = production.map((day, index) => {
+		if (day === 0 && firstZeroIndex === -1) {
+			foundOneAfterZero = false;
+			firstZeroIndex = index;
+			return day;
+		} else if (day === 0) {
+			return day;
+		}
 
-	let newProd = production.reverse().map(element => {
+		firstZeroIndex = -1;
+		foundOneAfterZero = true;
+		return day;
+	})
 
-		let elementDay = moment(lastDay);
-		lastDay = moment(lastDay).subtract(1, 'days');
-		let elementMonth = elementDay.month() + 1;
-		let daysInMonth = elementDay.daysInMonth();
-		let estimatedProd = estimatedProduction.get(elementMonth)
-		let dailyProd = estimatedProd / daysInMonth;
-		if (element > 0) stop = true;
-		if (!stop && element === 0) element = dailyProd;
-		return element;
-    })
+	if (firstZeroIndex >= 0) {
+		for (let index = firstZeroIndex; index < newProd.length; index++) {
+			newProd[index] = 1;			
+		}
+	}
 
-	console.log(newProd)
-	
-	// let output = new Map([["blah", new Map([["blah", "blah"]]) ]]); // example
+	let parseStartDate = moment(startDate, 'YYYY-MM-DD');
+	let monthForThisDay = parseStartDate.format('M');
+	let yearForThisDay = parseStartDate.format('YYYY');
+	let daysInMonth = estimatedProduction.get(+monthForThisDay);
+	let interator = 1;
 
-	let response = newProd.reverse().reduce((acc, val) => {
+	let response = newProd.reduce((acc, val) => {
+				
+		if (daysInMonth < interator) {
+			if (monthForThisDay === 12) { 
+				parseStartDate.add(1, 'year'); 
+			} 
 
-		let monthForThisDay = moment(startDate).month() + 1;
-		let daysInMonth = moment(startDate).daysInMonth();
-		let myProductionMap = new Map()
+			parseStartDate.add(1, 'month'); 
+			interator = 1;
+		}  
+		monthForThisDay = parseStartDate.format('M');
+		yearForThisDay = parseStartDate.format('YYYY');
+		daysInMonth = estimatedProduction.get(+monthForThisDay);
 
-		let prodSum = newProd.reduce((a,b)  => a + b, 0);
-		console.log(prodSum)
+		let yearToMap = acc.get(yearForThisDay) || new Map();
+		let sumToDay = yearToMap.get(monthForThisDay) || 0;
+		let prodSum = val + sumToDay;
+		interator++;
+		yearToMap.set(monthForThisDay, prodSum)	
+		acc.set(yearForThisDay, yearToMap);
 
-		myProductionMap.set( monthForThisDay, prodSum )	
-
-		return myProductionMap;
+		return acc;
 	}, new Map ());
 
 	console.log(response);
