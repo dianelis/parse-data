@@ -1,1 +1,2 @@
-for tests: npm test
+npm start
+npm test

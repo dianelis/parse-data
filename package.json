@@ -1,11 +1,10 @@
 {
-    "name": "parse",
+    "name": "parse-data",
     "version": "1.0.0",
-    "description": "",
-    "main": "server.js",
+    "description": "parse production data",
+    "main": "index.js",
     "scripts": {
-        "test": "mocha parseProduction.test.js",
-        "start": "node parseProduction.js"
+        "start": "node index.js"
     },
     "keywords": [],
     "author": "",
@@ -13,9 +12,7 @@
     "devDependencies": {
         "@babel/core": "^7.8.4",
         "@babel/preset-env": "^7.8.4",
-        "@babel/register": "^7.8.3",
-        "chai": "^4.2.0",
-        "mocha": "^7.0.1"
+        "@babel/register": "^7.8.3"
     },
     "dependencies": {
         "moment": "^2.24.0"

@@ -1,3 +1,5 @@
+const { parseProduction } = require('./parseProduction');
+
 // Import your parseProduction module
 
 // We'll execute the script with node index.js
@@ -54,3 +56,4 @@ const systemProduction = {
 	]
 };
 
+parseProduction(systemProduction, estimatedProduction);

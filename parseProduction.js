@@ -1,63 +1,6 @@
 const moment = require('moment')
 
-// Import your parseProduction module
-
-// We'll execute the script with node index.js
-// Expected result in the console should be the following
-/*
-Map {
-  '2019' => Map {
-    '7' => 31,
-    '6' => 30,
-    '5' => 31,
-    '4' => 30,
-    '3' => 31,
-    '2' => 28,
-    '1' => 31
-  },
-  '2018' => Map { 
-  	'12' => 31
-  	'11' => 29
-  	'10' => 31
-  	'9' => 30
-  	'8' => 29
-  }
-}
-*/
-
-// Monthly estimates
-const estimatedProduction = new Map([
-	[1, 31],
-	[2, 28],
-	[3, 31],
-	[4, 30],
-	[5, 31],
-	[6, 30],
-	[7, 31],
-	[8, 31],
-	[9, 30],
-	[10, 31],
-	[11, 30],
-	[12, 31]
-]);
-
-const systemProduction = {
-	system_id: 2,
-	start_date: '2018-08-01',
-	production: [
-		0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	]
-};
-
 const parseProduction = (systemProduction, estimatedProduction) => {
-
     const { start_date: startDate, production } = systemProduction;
 	let firstZeroIndex = -1;
 
@@ -73,7 +16,7 @@ const parseProduction = (systemProduction, estimatedProduction) => {
 		firstZeroIndex = -1;
 		foundOneAfterZero = true;
 		return day;
-	})
+	});
 
 	if (firstZeroIndex >= 0) {
 		for (let index = firstZeroIndex; index < newProd.length; index++) {
@@ -81,13 +24,13 @@ const parseProduction = (systemProduction, estimatedProduction) => {
 		}
 	}
 
-	let parseStartDate = moment(startDate, 'YYYY-MM-DD');
+	const parseStartDate = moment(startDate, 'YYYY-MM-DD');
 	let monthForThisDay = parseStartDate.format('M');
 	let yearForThisDay = parseStartDate.format('YYYY');
 	let daysInMonth = estimatedProduction.get(+monthForThisDay);
 	let interator = 1;
 
-	let response = newProd.reduce((acc, val) => {
+	const response = newProd.reduce((acc, val) => {
 				
 		if (daysInMonth < interator) {
 			if (monthForThisDay === 12) { 
@@ -111,10 +54,18 @@ const parseProduction = (systemProduction, estimatedProduction) => {
 		return acc;
 	}, new Map ());
 
-	console.log(response);
-    return response;
-}
+	const formattedOutput = new Map();
+	Array.from(response).reverse().forEach(yearMap => {
+		const monthsMap = new Map();
+		Array.from(yearMap[1]).reverse().forEach(months => {
+			monthsMap.set(months[0], months[1]);
+		});
 
-parseProduction(systemProduction, estimatedProduction);
+		formattedOutput.set(yearMap[0], monthsMap);
+	});
+
+	console.log(formattedOutput);
+    return formattedOutput;
+}
 
 module.exports = { parseProduction };
